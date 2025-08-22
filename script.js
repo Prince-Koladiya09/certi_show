@@ -1,7 +1,7 @@
 // --- 1. Initialize Supabase ---
 // IMPORTANT: Paste your own URL and anon key here from the Supabase dashboard
-const SUPABASE_URL = 'https://crrtisjgpipyojyhztyz.supabase.co'; 
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNycnRpc2pncGlweW9qeWh6dHl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4NTk4ODAsImV4cCI6MjA3MTQzNTg4MH0.LyBf_vp73BxnDVPdbjBDIf1g1YnzfbpskES2fRUg2Gc';
+const SUPABASE_URL = 'YOUR_SUPABASE_URL'; 
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -97,6 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const closeModal = () => modal.style.display = 'none';
 
+    // --- Modal Event Listeners ---
+    // *** FIX: Re-added the event listener for the Add Certificate button ***
     addCertificateBtn.addEventListener('click', () => openModal());
     closeButton.addEventListener('click', closeModal);
     window.addEventListener('click', (event) => {
