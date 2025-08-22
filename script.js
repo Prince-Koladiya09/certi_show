@@ -1,3 +1,10 @@
+// --- 1. Initialize Supabase ---
+// IMPORTANT: Paste your own URL and anon key here from the Supabase dashboard
+const SUPABASE_URL = 'https://crrtisjgpipyojyhztyz.supabase.co'; 
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNycnRpc2pncGlweW9qeWh6dHl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4NTk4ODAsImV4cCI6MjA3MTQzNTg4MH0.LyBf_vp73BxnDVPdbjBDIf1g1YnzfbpskES2fRUg2Gc';
+
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 document.addEventListener('DOMContentLoaded', () => {
     const addCertificateBtn = document.getElementById('addCertificateBtn');
     const modal = document.getElementById('certificateModal');
@@ -7,41 +14,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalTitle = document.getElementById('modalTitle');
     const certificateIdField = document.getElementById('certificateId');
 
-    let certificates = [
-        {
-            id: 1,
-            name: 'Certified JavaScript Developer',
-            company: 'Tech Institute',
-            date: '2023-05-20',
-            field: 'Web Development',
-            details: 'Completed an intensive course on modern JavaScript, covering ES6+, async programming, and frameworks.',
-            link: 'https://github.com/google/gemini-api'
-        },
-        {
-            id: 2,
-            name: 'Agile Project Management',
-            company: 'Project Experts',
-            date: '2022-11-15',
-            field: 'Project Management',
-            details: 'Certified in Agile and Scrum methodologies for efficient project delivery and team collaboration.',
-            link: ''
-        }
-    ];
+    // This global variable will hold the current list of certificates from the database
+    let currentCertificates = [];
 
-    const renderCertificates = () => {
+    // --- 2. Fetch and Display Certificates from Supabase ---
+    const getCertificates = async () => {
+        const { data, error } = await supabase
+            .from('certificates')
+            .select('*')
+            .order('date', { ascending: false }); // Order by date, newest first
+
+        if (error) {
+            console.error('Error fetching certificates:', error);
+            return;
+        }
+        
+        currentCertificates = data; // Store the fetched data globally
+        renderCertificates(currentCertificates);
+    };
+    
+    // --- 3. UI Rendering ---
+    const renderCertificates = (certificates) => {
         certificateList.innerHTML = '';
+        if (!certificates || certificates.length === 0) {
+            certificateList.innerHTML = '<p>No certificates added yet. Click "Add Certificate" to start.</p>';
+            return;
+        }
         certificates.forEach(cert => {
             const certCard = createCertificateCard(cert);
             certificateList.appendChild(certCard);
         });
     };
 
-    const createCertificateCard = (cert, isNew = false) => {
+    const createCertificateCard = (cert) => {
         const certCard = document.createElement('div');
         certCard.classList.add('certificate-card');
-        if (isNew) {
-            certCard.classList.add('fade-in-up');
-        }
         certCard.setAttribute('data-id', cert.id);
 
         const linkHTML = cert.link ?
@@ -65,12 +72,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return certCard;
     };
 
-
+    // --- 4. Open Modal for Adding or Editing ---
     const openModal = (id = null) => {
         certificateForm.reset();
         certificateIdField.value = '';
         if (id) {
-            const cert = certificates.find(c => c.id === id);
+            // Find the certificate from the globally stored list
+            const cert = currentCertificates.find(c => c.id === id);
             if (cert) {
                 modalTitle.textContent = 'Edit Certificate';
                 certificateIdField.value = cert.id;
@@ -87,24 +95,20 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.style.display = 'block';
     };
 
-    const closeModal = () => {
-        modal.style.display = 'none';
-    };
+    const closeModal = () => modal.style.display = 'none';
 
     addCertificateBtn.addEventListener('click', () => openModal());
     closeButton.addEventListener('click', closeModal);
     window.addEventListener('click', (event) => {
-        if (event.target === modal) {
-            closeModal();
-        }
+        if (event.target === modal) closeModal();
     });
 
-    certificateForm.addEventListener('submit', (event) => {
+    // --- 5. Handle Form Submission (Add or Update) ---
+    certificateForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
         const id = parseInt(certificateIdField.value);
         const certificateData = {
-            id: id || Date.now(),
             name: document.getElementById('certificateName').value,
             company: document.getElementById('issuingCompany').value,
             date: document.getElementById('issueDate').value,
@@ -113,18 +117,33 @@ document.addEventListener('DOMContentLoaded', () => {
             link: document.getElementById('certificateLink').value.trim()
         };
 
+        let error;
         if (id) {
-            certificates = certificates.map(cert => cert.id === id ? certificateData : cert);
+            // If an ID exists, it's an UPDATE operation
+            const { error: updateError } = await supabase
+                .from('certificates')
+                .update(certificateData)
+                .eq('id', id);
+            error = updateError;
         } else {
-            certificates.push(certificateData);
+            // If there's no ID, it's an INSERT operation
+            const { error: insertError } = await supabase
+                .from('certificates')
+                .insert([certificateData]);
+            error = insertError;
         }
-        
-        renderCertificates(); // Re-render the whole list after adding or updating
-        closeModal();
+
+        if (error) {
+            console.error('Error saving certificate:', error);
+            alert('Failed to save certificate. See console for details.');
+        } else {
+            getCertificates(); // Re-fetch the data to show the changes
+            closeModal();
+        }
     });
 
-    // *** FIX IS IN THIS SECTION ***
-    certificateList.addEventListener('click', (event) => {
+    // --- 6. Handle Clicks on Edit and Delete Buttons ---
+    certificateList.addEventListener('click', async (event) => {
         const card = event.target.closest('.certificate-card');
         if (!card) return;
 
@@ -136,13 +155,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (event.target.classList.contains('delete-btn')) {
             if (confirm('Are you sure you want to delete this certificate?')) {
-                // 1. Filter the array to remove the certificate
-                certificates = certificates.filter(cert => cert.id !== id);
-                // 2. Re-render the entire list from the updated array
-                renderCertificates();
+                const { error } = await supabase
+                    .from('certificates')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) {
+                    console.error('Error deleting certificate:', error);
+                } else {
+                    getCertificates(); // Re-fetch data to update the UI
+                }
             }
         }
     });
 
-    renderCertificates();
+    // --- 7. Initial Load ---
+    getCertificates();
 });
