@@ -27,7 +27,7 @@ A sleek, modern, and fully-responsive web application for managing your professi
     *   [CSS (`style.css`)](#css-stylecss)
     *   [JavaScript (`script.js`)](#javascript-scriptjs)
 7.  [**🤝 How to Contribute**](#-how-to-contribute)
-8.  [**📜 License**](#-license)
+
 
 ---
 
