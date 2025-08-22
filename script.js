@@ -1,9 +1,9 @@
 // --- 1. Initialize Supabase ---
-// IMPORTANT: Paste your own URL and anon key here from the Supabase dashboard
-const SUPABASE_URL = 'YOUR_SUPABASE_URL'; 
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const SUPABASE_URL = 'https://crrtisjgpipyojyhztyz.supabase.co'; 
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNycnRpc2pncGlweW9qeWh6dHl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4NTk4ODAsImV4cCI6MjA3MTQzNTg4MH0.LyBf_vp73BxnDVPdbjBDIf1g1YnzfbpskES2fRUg2Gc';
 
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Correctly initialize the Supabase client
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 document.addEventListener('DOMContentLoaded', () => {
     const addCertificateBtn = document.getElementById('addCertificateBtn');
@@ -14,34 +14,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalTitle = document.getElementById('modalTitle');
     const certificateIdField = document.getElementById('certificateId');
 
-    // This global variable will hold the current list of certificates from the database
     let currentCertificates = [];
 
-    // --- 2. Fetch and Display Certificates from Supabase ---
+    // --- 2. Fetch and Display Certificates ---
     const getCertificates = async () => {
-        const { data, error } = await supabase
+        const { data, error } = await db
             .from('certificates')
             .select('*')
-            .order('date', { ascending: false }); // Order by date, newest first
+            .order('issueDate', { ascending: false });
 
         if (error) {
             console.error('Error fetching certificates:', error);
             return;
         }
         
-        currentCertificates = data; // Store the fetched data globally
+        currentCertificates = data;
         renderCertificates(currentCertificates);
     };
     
-    // --- 3. UI Rendering ---
+    // --- 3. Render UI ---
     const renderCertificates = (certificates) => {
         certificateList.innerHTML = '';
         if (!certificates || certificates.length === 0) {
             certificateList.innerHTML = '<p>No certificates added yet. Click "Add Certificate" to start.</p>';
             return;
         }
-        certificates.forEach(cert => {
+        certificates.forEach((cert, index) => {
             const certCard = createCertificateCard(cert);
+            certCard.style.animationDelay = `${index * 0.1}s`; // Staggered animation
             certificateList.appendChild(certCard);
         });
     };
@@ -51,17 +51,17 @@ document.addEventListener('DOMContentLoaded', () => {
         certCard.classList.add('certificate-card');
         certCard.setAttribute('data-id', cert.id);
 
-        const linkHTML = cert.link ?
-            `<a href="${cert.link}" target="_blank" rel="noopener noreferrer" class="certificate-link-btn">View on GitHub</a>` :
+        const linkHTML = cert.certificateLink ?
+            `<a href="${cert.certificateLink}" target="_blank" rel="noopener noreferrer" class="certificate-link-btn">View on GitHub</a>` :
             '';
 
         certCard.innerHTML = `
             <div>
-                <h3>${cert.name}</h3>
-                <p><strong>Company:</strong> ${cert.company}</p>
-                <p><strong>Date:</strong> ${cert.date}</p>
-                <p><strong>Field:</strong> ${cert.field}</p>
-                <p><strong>Details:</strong> ${cert.details}</p>
+                <h3>${cert.certificateName}</h3>
+                <p><strong>Company:</strong> ${cert.issuingCompany}</p>
+                <p><strong>Date:</strong> ${cert.issueDate}</p>
+                <p><strong>Field:</strong> ${cert.certificateField}</p>
+                <p><strong>Details:</strong> ${cert.certificateDetails}</p>
                 ${linkHTML}
             </div>
             <div class="card-actions">
@@ -72,22 +72,21 @@ document.addEventListener('DOMContentLoaded', () => {
         return certCard;
     };
 
-    // --- 4. Open Modal for Adding or Editing ---
+    // --- 4. Modal Management ---
     const openModal = (id = null) => {
         certificateForm.reset();
         certificateIdField.value = '';
         if (id) {
-            // Find the certificate from the globally stored list
             const cert = currentCertificates.find(c => c.id === id);
             if (cert) {
                 modalTitle.textContent = 'Edit Certificate';
                 certificateIdField.value = cert.id;
-                document.getElementById('certificateName').value = cert.name;
-                document.getElementById('issuingCompany').value = cert.company;
-                document.getElementById('issueDate').value = cert.date;
-                document.getElementById('certificateField').value = cert.field;
-                document.getElementById('certificateDetails').value = cert.details;
-                document.getElementById('certificateLink').value = cert.link || '';
+                document.getElementById('certificateName').value = cert.certificateName;
+                document.getElementById('issuingCompany').value = cert.issuingCompany;
+                document.getElementById('issueDate').value = cert.issueDate;
+                document.getElementById('certificateField').value = cert.certificateField;
+                document.getElementById('certificateDetails').value = cert.certificateDetails;
+                document.getElementById('certificateLink').value = cert.certificateLink || '';
             }
         } else {
             modalTitle.textContent = 'Add Certificate';
@@ -97,39 +96,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const closeModal = () => modal.style.display = 'none';
 
-    // --- Modal Event Listeners ---
-    // *** FIX: Re-added the event listener for the Add Certificate button ***
     addCertificateBtn.addEventListener('click', () => openModal());
     closeButton.addEventListener('click', closeModal);
     window.addEventListener('click', (event) => {
         if (event.target === modal) closeModal();
     });
 
-    // --- 5. Handle Form Submission (Add or Update) ---
+    // --- 5. Handle Form Submission (Add/Update) ---
     certificateForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
-        const id = parseInt(certificateIdField.value);
+        const id = certificateIdField.value ? parseInt(certificateIdField.value) : null;
         const certificateData = {
-            name: document.getElementById('certificateName').value,
-            company: document.getElementById('issuingCompany').value,
-            date: document.getElementById('issueDate').value,
-            field: document.getElementById('certificateField').value,
-            details: document.getElementById('certificateDetails').value,
-            link: document.getElementById('certificateLink').value.trim()
+            certificateName: document.getElementById('certificateName').value,
+            issuingCompany: document.getElementById('issuingCompany').value,
+            issueDate: document.getElementById('issueDate').value,
+            certificateField: document.getElementById('certificateField').value,
+            certificateDetails: document.getElementById('certificateDetails').value,
+            certificateLink: document.getElementById('certificateLink').value.trim()
         };
 
         let error;
         if (id) {
-            // If an ID exists, it's an UPDATE operation
-            const { error: updateError } = await supabase
+            const { error: updateError } = await db
                 .from('certificates')
                 .update(certificateData)
                 .eq('id', id);
             error = updateError;
         } else {
-            // If there's no ID, it's an INSERT operation
-            const { error: insertError } = await supabase
+            const { error: insertError } = await db
                 .from('certificates')
                 .insert([certificateData]);
             error = insertError;
@@ -139,12 +134,12 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error saving certificate:', error);
             alert('Failed to save certificate. See console for details.');
         } else {
-            getCertificates(); // Re-fetch the data to show the changes
+            getCertificates();
             closeModal();
         }
     });
 
-    // --- 6. Handle Clicks on Edit and Delete Buttons ---
+    // --- 6. Handle Edit and Delete ---
     certificateList.addEventListener('click', async (event) => {
         const card = event.target.closest('.certificate-card');
         if (!card) return;
@@ -157,15 +152,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (event.target.classList.contains('delete-btn')) {
             if (confirm('Are you sure you want to delete this certificate?')) {
-                const { error } = await supabase
+                const { error } = await db
                     .from('certificates')
                     .delete()
                     .eq('id', id);
 
                 if (error) {
                     console.error('Error deleting certificate:', error);
-                } else {
-                    getCertificates(); // Re-fetch data to update the UI
+                } else {    
+                    getCertificates();
                 }
             }
         }
