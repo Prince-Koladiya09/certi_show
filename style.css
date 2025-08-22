@@ -1,0 +1,251 @@
+:root {
+    --primary-color: #6a11cb;
+    --secondary-color: #2575fc;
+    --background-color: #f0f2f5;
+    --card-background-color: #ffffff;
+    --text-color: #333;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --danger-color: #e74c3c;
+    --danger-hover-color: #c0392b;
+    --github-color: #333; /* Color for the new button */
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 2rem;
+    font-size: 18px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 3px solid transparent;
+    border-image: linear-gradient(to right, var(--primary-color), var(--secondary-color)) 1;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.primary-btn {
+    background-image: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+#certificate-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 2.5rem;
+}
+
+.certificate-card {
+    background-color: var(--card-background-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    padding: 2.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-left: 5px solid var(--secondary-color);
+    display: flex; /* Using flexbox for better content alignment */
+    flex-direction: column;
+}
+
+.certificate-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.certificate-card h3 {
+    margin-top: 0;
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+}
+
+.certificate-card p {
+    line-height: 1.8;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+/* NEW STYLE FOR THE GITHUB BUTTON */
+.certificate-link-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: var(--github-color);
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 1rem; /* Add some space above the button */
+}
+
+.certificate-link-btn:hover {
+    background-color: #555;
+    transform: translateY(-2px);
+}
+
+.card-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: auto; /* Pushes the buttons to the bottom */
+    padding-top: 1.5rem; /* Space between content and buttons */
+    gap: 0.75rem;
+}
+
+.card-actions button {
+    background: none;
+    border: 2px solid var(--secondary-color);
+    color: var(--secondary-color);
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.card-actions .delete-btn {
+    border-color: var(--danger-color);
+    color: var(--danger-color);
+}
+
+.card-actions button:hover {
+    color: white;
+    background-color: var(--secondary-color);
+}
+
+.card-actions .delete-btn:hover {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+}
+
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 8% auto;
+    padding: 3rem;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 650px;
+    border-radius: 12px;
+    position: relative;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h2 {
+    text-align: center;
+    font-size: 2.2rem;
+    color: var(--primary-color);
+    margin-bottom: 2rem;
+}
+
+.close-button {
+    color: #aaa;
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    font-size: 2.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+}
+
+.form-group {
+    margin-bottom: 1.75rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.2rem;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 8px rgba(37, 117, 252, 0.5);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+}
+
+@keyframes fadeInUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
