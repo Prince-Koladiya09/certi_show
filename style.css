@@ -16,11 +16,11 @@ body {
     color: var(--text-color);
     margin: 0;
     padding: 2rem;
-    font-size: 16px; /* UPDATED: Returned to a standard base font size */
+    font-size: 18px;
 }
 
 .container {
-    max-width: 1200px; /* UPDATED: Back to a more standard max-width */
+    max-width: 1400px;
     margin: 0 auto;
 }
 
@@ -28,7 +28,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2.5rem;
+    margin-bottom: 3rem;
     padding-bottom: 1.5rem;
     border-bottom: 3px solid transparent;
     border-image: linear-gradient(to right, var(--primary-color), var(--secondary-color)) 1;
@@ -36,7 +36,7 @@ header {
 
 header h1 {
     margin: 0;
-    font-size: 2.5rem; /* UPDATED: Reduced header size */
+    font-size: 3rem;
     font-weight: 700;
     color: var(--primary-color);
 }
@@ -45,10 +45,10 @@ header h1 {
     background-image: linear-gradient(to right, var(--primary-color), var(--secondary-color));
     color: white;
     border: none;
-    padding: 12px 24px; /* UPDATED: Reduced button padding */
+    padding: 14px 28px;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 1rem; /* UPDATED: Reduced button font size */
+    font-size: 1.1rem;
     font-weight: 600;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -61,20 +61,21 @@ header h1 {
 
 #certificate-list {
     display: grid;
-    /* UPDATED: Reduced card min-width for a more moderate size */
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 2rem; /* UPDATED: Reduced gap */
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 2.5rem;
 }
 
 .certificate-card {
     background-color: var(--card-background-color);
     border-radius: 12px;
     box-shadow: 0 4px 12px var(--shadow-color);
-    padding: 1.75rem; /* UPDATED: Reduced padding */
+    padding: 2.5rem;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border-left: 5px solid var(--secondary-color);
     display: flex;
     flex-direction: column;
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
 }
 
 .certificate-card:hover {
@@ -84,26 +85,26 @@ header h1 {
 
 .certificate-card h3 {
     margin-top: 0;
-    font-size: 1.5rem; /* UPDATED: Reduced card title size */
+    font-size: 2rem;
     color: var(--primary-color);
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .certificate-card p {
-    line-height: 1.7;
-    margin-bottom: 0.75rem;
-    font-size: 1rem; /* UPDATED: Reduced paragraph size */
+    line-height: 1.8;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
 }
 
 .certificate-link-btn {
     display: inline-block;
-    padding: 10px 20px; /* UPDATED: Reduced padding */
+    padding: 12px 24px;
     background-color: var(--github-color);
     color: #fff;
     border-radius: 6px;
     text-decoration: none;
     font-weight: 600;
-    font-size: 1rem; /* UPDATED: Reduced font size */
+    font-size: 1.1rem;
     text-align: center;
     transition: background-color 0.3s ease, transform 0.3s ease;
     margin-top: 1rem;
@@ -126,11 +127,11 @@ header h1 {
     background: none;
     border: 2px solid var(--secondary-color);
     color: var(--secondary-color);
-    padding: 8px 16px; /* UPDATED: Reduced padding */
+    padding: 10px 20px;
     border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
-    font-size: 0.9rem; /* UPDATED: Reduced font size */
+    font-size: 1rem;
     transition: all 0.3s ease;
 }
 
@@ -149,7 +150,6 @@ header h1 {
     border-color: var(--danger-color);
 }
 
-/* Modal Styles */
 .modal {
     display: none;
     position: fixed;
@@ -165,11 +165,11 @@ header h1 {
 
 .modal-content {
     background-color: #fefefe;
-    margin: 10% auto;
-    padding: 2.5rem; /* UPDATED: Reduced padding */
+    margin: 8% auto;
+    padding: 3rem;
     border: 1px solid #888;
     width: 90%;
-    max-width: 550px; /* UPDATED: Reduced max-width for a smaller modal */
+    max-width: 650px;
     border-radius: 12px;
     position: relative;
     box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
@@ -177,7 +177,7 @@ header h1 {
 
 .modal-content h2 {
     text-align: center;
-    font-size: 1.8rem; /* UPDATED: Reduced modal title size */
+    font-size: 2.2rem;
     color: var(--primary-color);
     margin-bottom: 2rem;
 }
@@ -187,7 +187,7 @@ header h1 {
     position: absolute;
     top: 1rem;
     right: 1.5rem;
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     font-weight: bold;
     cursor: pointer;
     transition: color 0.3s;
@@ -199,25 +199,25 @@ header h1 {
 }
 
 .form-group {
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.75rem;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
     font-weight: 600;
-    font-size: 1rem; /* UPDATED: Reduced label size */
+    font-size: 1.25rem;
 }
 
 .form-group input,
 .form-group textarea {
     width: 100%;
-    padding: 12px; /* UPDATED: Reduced padding */
+    padding: 15px;
     border: 1px solid #ccc;
-    border-radius: 6px;
+    border-radius: 8px;
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
-    font-size: 1rem; /* UPDATED: Reduced input font size */
+    font-size: 1.2rem;
 }
 
 .form-group input:focus,
@@ -227,15 +227,9 @@ header h1 {
     box-shadow: 0 0 8px rgba(37, 117, 252, 0.5);
 }
 
-/* Animations */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
-}
-
-.fade-in-up {
-    animation: fadeInUp 0.5s ease forwards;
-    opacity: 0;
 }
 
 @keyframes fadeInUp {
