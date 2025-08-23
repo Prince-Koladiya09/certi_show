@@ -11,7 +11,7 @@ A sleek, modern, and fully-responsive web application for managing your professi
 
 ### 🚀 Live Demo
 
-**[View the Live Application Here]([https://your-app-link-here.com](https://certfolio.netlify.app/))** <!-- TODO: Replace with your actual deployment link -->
+**[View the Live Application Here](https://certfolio.netlify.app/))** <!-- TODO: Replace with your actual deployment link -->
 
 ---
 
